@@ -1,0 +1,10 @@
+version: 2
+
+models:
+  - name: rec_facts
+    description: Consent-filtered recommendation facts for analysts. Contains no direct identifiers.
+    columns:
+      - name: rec_id
+        data_tests: [unique, not_null]
+  - name: mood_genre_summary
+    description: Mood by genre aggregates with small-cell suppression.

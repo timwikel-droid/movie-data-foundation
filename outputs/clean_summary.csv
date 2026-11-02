@@ -1,0 +1,7 @@
+table,staged_rows,clean_rows,rows_dropped,pct_dropped
+movies,300,300,0,0.0
+users,1520,1500,20,1.32
+sessions,6022,5947,75,1.25
+mood_checkins,5406,5286,120,2.22
+recommendations,16218,15858,360,2.22
+ratings,4687,4501,186,3.97

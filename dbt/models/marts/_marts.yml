@@ -1,0 +1,77 @@
+version: 2
+
+models:
+  - name: dim_users
+    description: One row per valid user. email_hash is a salted hash; never expose to analysts.
+    columns:
+      - name: user_id
+        data_tests: [unique, not_null]
+      - name: email_hash
+        data_tests: [unique, not_null]
+      - name: age_band
+        data_tests:
+          - accepted_values: {arguments: {values: ['18-24','25-34','35-44','45-54','55+']}}
+      - name: region
+        data_tests:
+          - accepted_values: {arguments: {values: ['NL','Other Canada','International']}}
+      - name: consent_analytics
+        data_tests:
+          - accepted_values: {arguments: {values: [0, 1], quote: false}}
+
+  - name: dim_movies
+    columns:
+      - name: movie_id
+        data_tests: [unique, not_null]
+      - name: genre
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['comedy','drama','thriller','romance','action','documentary','animation','horror','sci-fi']
+
+  - name: fct_sessions
+    columns:
+      - name: session_id
+        data_tests: [unique, not_null]
+      - name: user_id
+        data_tests:
+          - not_null
+          - relationships: {arguments: {to: ref('dim_users'), field: user_id}}
+
+  - name: fct_mood_checkins
+    columns:
+      - name: checkin_id
+        data_tests: [unique, not_null]
+      - name: session_id
+        data_tests:
+          - relationships: {arguments: {to: ref('fct_sessions'), field: session_id}}
+      - name: mood
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments: {values: ['happy','sad','stressed','relaxed','excited','bored','nostalgic','anxious']}
+      - name: intensity
+        data_tests:
+          - between_values: {arguments: {min_value: 1, max_value: 5}}
+
+  - name: fct_recommendations
+    columns:
+      - name: rec_id
+        data_tests: [unique, not_null]
+      - name: checkin_id
+        data_tests:
+          - relationships: {arguments: {to: ref('fct_mood_checkins'), field: checkin_id}}
+      - name: movie_id
+        data_tests:
+          - relationships: {arguments: {to: ref('dim_movies'), field: movie_id}}
+
+  - name: fct_ratings
+    columns:
+      - name: rating_id
+        data_tests: [unique, not_null]
+      - name: rec_id
+        data_tests:
+          - unique
+          - relationships: {arguments: {to: ref('fct_recommendations'), field: rec_id}}
+      - name: rating
+        data_tests:
+          - between_values: {arguments: {min_value: 1, max_value: 5}}

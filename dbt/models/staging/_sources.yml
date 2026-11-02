@@ -1,0 +1,17 @@
+version: 2
+
+sources:
+  - name: raw
+    description: >
+      Raw, unvalidated event data. On DuckDB these are the CSVs in data/raw; on Databricks they are Delta tables
+      in <catalog>.raw created by databricks/01_load_raw.py. All data is synthetic.
+    schema: raw
+    meta:
+      external_location: "../data/raw/{name}.csv"   # used by dbt-duckdb only; ignored by dbt-databricks
+    tables:
+      - name: users
+      - name: movies
+      - name: sessions
+      - name: mood_checkins
+      - name: recommendations
+      - name: ratings

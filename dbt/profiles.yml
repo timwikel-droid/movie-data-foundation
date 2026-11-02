@@ -1,0 +1,20 @@
+# Run from this folder:  dbt build --profiles-dir .
+moodbox:
+  target: dev
+  outputs:
+    # Local, verified: DuckDB reads the raw CSVs directly (see models/staging/_sources.yml).
+    dev:
+      type: duckdb
+      path: target/moodbox.duckdb
+      threads: 4
+
+    # Databricks: NOT verified in this project (no workspace was available). Set the env vars, then
+    #   dbt build --profiles-dir . --target databricks
+    databricks:
+      type: databricks
+      host: "{{ env_var('DATABRICKS_HOST') }}"            # e.g. adb-123456789.1.azuredatabricks.net
+      http_path: "{{ env_var('DATABRICKS_HTTP_PATH') }}"  # SQL warehouse -> Connection details
+      token: "{{ env_var('DATABRICKS_TOKEN') }}"
+      catalog: "{{ env_var('DATABRICKS_CATALOG', 'main') }}"
+      schema: moodbox
+      threads: 4

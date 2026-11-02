@@ -1,0 +1,11 @@
+version: 2
+
+models:
+  - name: dq_results
+    description: Data-quality check results on raw data (one row per check).
+    columns:
+      - name: check_id
+        data_tests: [unique, not_null]
+      - name: severity
+        data_tests:
+          - accepted_values: {arguments: {values: ['error', 'policy', 'info']}}

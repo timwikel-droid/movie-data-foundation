@@ -1,0 +1,21 @@
+name: moodbox
+version: "1.0.0"
+config-version: 2
+profile: moodbox
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+target-path: "target"
+clean-targets: ["target", "dbt_packages"]
+
+vars:
+  min_cell: 10          # suppress aggregate cells built from fewer ratings than this
+
+models:
+  moodbox:
+    staging:   {+materialized: view}
+    marts:     {+materialized: table}
+    quality:   {+materialized: table}
+    analytics: {+materialized: table}

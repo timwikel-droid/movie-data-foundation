@@ -1,0 +1,44 @@
+# Databricks Asset Bundle: runs the raw load, then the dbt project, as one job.
+# UNTESTED: written from the Databricks Asset Bundles / dbt task documentation without a workspace to run it in.
+# Validate with `databricks bundle validate` and compare the dbt_task fields with the current docs before deploying.
+bundle:
+  name: moodbox
+
+variables:
+  catalog:
+    default: main
+  warehouse_id:
+    description: ID of the SQL warehouse the dbt task runs on
+
+targets:
+  dev:
+    default: true
+    workspace:
+      host: https://REPLACE-WITH-YOUR-WORKSPACE.cloud.databricks.com
+
+resources:
+  jobs:
+    moodbox_pipeline:
+      name: moodbox-pipeline
+      tasks:
+        - task_key: load_raw
+          notebook_task:
+            notebook_path: ./databricks/01_load_raw.py
+            base_parameters:
+              catalog: ${var.catalog}
+
+        - task_key: dbt_build
+          depends_on:
+            - task_key: load_raw
+          dbt_task:
+            source: WORKSPACE
+            project_directory: ${workspace.file_path}/dbt
+            commands:
+              - dbt seed
+              - dbt build
+            warehouse_id: ${var.warehouse_id}
+            catalog: ${var.catalog}
+            schema: moodbox
+          libraries:
+            - pypi:
+                package: dbt-databricks>=1.8,<2.0

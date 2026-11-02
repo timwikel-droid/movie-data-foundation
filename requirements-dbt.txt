@@ -1,0 +1,2 @@
+dbt-duckdb>=1.8        # local, verified target
+# dbt-databricks>=1.8  # uncomment to run against a Databricks SQL warehouse (unverified here)
